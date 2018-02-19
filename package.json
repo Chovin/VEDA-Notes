@@ -1,0 +1,36 @@
+{
+  "name": "VEDA-Notes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "glsl-ascii-filter": "^1.0.1",
+    "glsl-atmosphere": "^2.0.0",
+    "glsl-camera-ray": "^1.0.0",
+    "glsl-cornell-box": "^2.0.4",
+    "glsl-diffuse-lambert": "^1.0.0",
+    "glsl-diffuse-oren-nayar": "^1.0.2",
+    "glsl-dither": "^1.0.1",
+    "glsl-fog": "0.0.1",
+    "glsl-hsv2rgb": "^1.0.0",
+    "glsl-luma": "^1.0.1",
+    "glsl-noise": "^0.0.0",
+    "glsl-raytrace": "^1.0.0",
+    "glsl-ruler": "^1.0.1",
+    "glsl-sdf-normal": "^1.0.0",
+    "glsl-sdf-ops": "0.0.3",
+    "glsl-sdf-primitives": "0.0.1",
+    "glsl-specular-beckmann": "^1.1.2",
+    "glsl-specular-blinn-phong": "^1.0.2",
+    "glsl-specular-cook-torrance": "^2.0.1",
+    "glsl-specular-phong": "^1.0.0",
+    "glsl-specular-ward": "^1.0.0",
+    "glsl-square-frame": "^1.0.1",
+    "glsl-turntable-camera": "^1.0.0"
+  }
+}
