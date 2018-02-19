@@ -266,7 +266,7 @@ void mainFrag() {
 	uv += vec2(-.5, -.5/screen_ratio);
 
 	vec2 ma = gl_FragCoord.xy/resolution/resolution;
-	vec2 pos = texture2D(memory, ma).rg;
+	vec3 pos = texture2D(memory, ma).rgb;
 	// ma.x += 1./resolution.x;
 	// vec3 memu = texture2D(memory, ma).rgb;  // mouse
 	ma.x += 2./resolution.x;
@@ -295,7 +295,7 @@ void mainFrag() {
 	ssize *= abs(langle.g);
 	lookv.yz*=rot(-langle.g);
 	lookv.xz*=rot(langle.r);
-	screen.xz += pos;
+	screen += pos;
 	mat3 looked = look(uv, screen, lookv, up, fov, ssize);
 	vec3 cuv = looked[0];
 	vec3 ray = looked[1];
@@ -334,14 +334,15 @@ void mainFrag() {
 
 void mainComp() {
 	if (FRAMEINDEX == 0) {
-		gl_FragColor = vec4(.5);
+		gl_FragColor = vec4(0);
 	} else {
 		vec3 c = vec3(0);
 		vec2 uv = gl_FragCoord.xy / resolution;
-		vec2 d = vec2(texture2D(key, vec2(65. / 256.)).r*-1. + // a
+		vec3 d = vec3(texture2D(key, vec2(65. / 256.)).r*-1. + // a
 									texture2D(key, vec2(68. / 256.)).r,			 // d
 									texture2D(key, vec2(83. / 256.)).r*-1. + // s
-									texture2D(key, vec2(87. / 256.)).r);		 // w
+									texture2D(key, vec2(87. / 256.)).r,  		 // w
+									texture2D(key, vec2(32. / 256.)).r);		 // space
 		vec2 nuv = gl_FragCoord.xy/resolution.x;
 		float screen_ratio = resolution.x/resolution.y;
 		nuv += vec2(-.5, -.5/screen_ratio);
@@ -357,13 +358,15 @@ void mainComp() {
 		vec3 memu = texture2D(memory, ma).rgb;  // mouse
 		ma.x += 1./resolution.x;
 		vec3 mema = texture2D(memory, ma).rgb;  // angle
+		ma.x += 1./resolution.x;
+		vec3 memj = texture2D(memory, ma).rgb;  // jump
 
 		//vec2 dm = mouse - memu.rg;  // change in mouse // that didn't work
 		vec2 a = memu.rg;
 		vec2 cmouse = mouse-.5;
 		a.r = mod(mema.r + float(abs(cmouse.x)>.1)*(abs(cmouse.x)-.1)*sgn(cmouse.x)*.3, PI2);
 		vec2 auv = nuv;
-		pR(auv, -a.r);
+		pR(auv, -a.r - PI/2.);
 		c += float(auv.y>-.002 && auv.y<.002 &&
 							 auv.x>.03 && auv.x<.05);
 
@@ -377,28 +380,44 @@ void mainComp() {
 							 upv.y > look.y - .01 && upv.y < look.y + .01);
 		//c += float(length(upv)<.01);
 
+		float speed = .05;
+    d *= speed; // pack
+		pR(d.xy, a.r + PI); // rotate to view
 
-    d *= .05; // pack
-		pR(d, a.r + PI); // rotate to view
+		// jump
+		bool onGround = memr.g <= .001;
+		bool canJump = memr.g <= .05;
+
+		memj.b -= speed*.2;  // gravity
+		memj.b += float(onGround)*(d.z*4.);  // += dy
+
+		memr.g += memj.b;
+		memr.g = max(0., memr.g);
+
+		memr.rb += d.xy;  // move
+
 		// just for visualization
-		c += vec3(float(length(uv-(d+.5))<.01));
-		c += vec3(float(length((nuv-memr.rg/8.)*32.))<.1);
+		c += vec3(float(length(uv-(d.xy+.5))<.01+d.z/2.));
+		c += vec3(float(length((nuv-memr.rb/8.)*32.))<.1+memr.g);
 		// // write bottom left fragment to .5 + d
 		// c.r += float(vmax(uv*resolution)<1.)*(d.x+mem.r);
 		// // write next fragment to the right
 		// vec2 fc = uv*resolution;
 		// c.g += float(vmax(vec2(fc.x-1.,fc.y))<1. &&
 		// 									 fc.x > 1.)*(d.y+mem.g);
-		c.rg += float(uv.x>.99)*(memr.rg);
+		c += float(uv.x>.99)*(memr);
+		c += float(uv.x<.99 && uv.x>.98)*(memj);
+		c += float(uv.x<.98 && uv.x>.97)*(float(onGround));
 		// c.rg += float(uv.y>.99)*(memu.rg);
 
 		vec2 fc = uv*resolution;
-		c.rg += float(vmax(fc)<1.)*(d+memr.rg);
+		c += float(vmax(fc)<1.)*(memr);
 		// c.rg += float(vmax(vec2(fc.x-1.,fc.y))<1. &&
 		//  									fc.x > 1.)*(mouse+memr.rg);
 		c.rg += float(vmax(vec2(fc.x-2.,fc.y))<1. &&
 		 									fc.x > 2.)*(a);
-
+		c.b += float(vmax(vec2(fc.x-3.,fc.y))<1. &&
+		 									fc.x > 3.)*(memj.b);
 
     gl_FragColor = vec4(c, 1);
 	}
