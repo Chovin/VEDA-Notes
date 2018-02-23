@@ -407,7 +407,7 @@ void draw() {
     // outer glow
     vec2 suv = gl_FragCoord.xy/resolution;
     vec2 cuv = suv - vec2(.5);
-    c += max(0.,-.35+length(cuv*.7*(1.+volume/400.)));
+    c += max(0.,-.35+length(cuv*.7*(1.+volume/800.)));
 
     // backbuffer trail
     c = c*.6 + texture2D(backbuffer, suv).rgb*.4;
