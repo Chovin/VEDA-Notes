@@ -12,9 +12,25 @@
 */
 
 
+// -- INSTRUCTIONS --
+//
+// Your Live Jam Reactor has sploded!
+// Better contain that splosion before it melts down.
+// Keep those musical ideas bouncing around in the core of your Reactor
+// while it cools down! Be careful, the more that you let escape,
+// the longer it'll take!
+//
+// Of course, it's more fun playing along to some music :)
+//
+// Refresh to restart.
+// Too easy? Try changing to a different difficulty lvl down below.
+//
+// ------------------
+
+
 // -- CONFIG --
 
-const int DIFFICULTY = 0;  // 0: easy, 1: medium, 2: hard, 3: master
+const int DIFFICULTY = 0;  // 0: easy, 1: medium, 2: savant, 3: inhuman
 
 // ------------
 
